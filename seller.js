@@ -51,51 +51,74 @@ class SellerForm {
             div.style.height = element.size.height;
 
             if (element.type === 'text') {
+                const isLocked = element.isLocked;
                 div.innerHTML = `
                     <textarea class="form-input" 
-                             style="font-size: ${element.fontSize}"
-                             placeholder="${element.placeholder}"></textarea>
+                             placeholder="${element.placeholder || 'Въведете текст'}"
+                             ${isLocked ? 'readonly' : ''}
+                    >${element.value || ''}</textarea>
                 `;
+                
+                const textarea = div.querySelector('.form-input');
+                if (element.fontSize) {
+                    textarea.style.fontSize = element.fontSize;
+                }
+                
+                if (isLocked) {
+                    div.classList.add('locked-field');
+                    textarea.style.backgroundColor = '#f8f9fa';
+                    textarea.style.cursor = 'default';
+                }
             } else if (element.type === 'image') {
+                const isLocked = element.isLocked;
                 div.innerHTML = `
-                    <div class="image-container">
-                        <input type="file" accept="image/*" class="image-input" style="display: none">
-                        ${element.imageUrl ? 
-                            `<img class="preview-image" src="${element.imageUrl}" style="display: block">` :
-                            `<div class="image-placeholder">
+                    <div class="image-container ${isLocked ? 'locked' : ''}">
+                        ${element.imageUrl ? `
+                            <img class="preview-image" src="${element.imageUrl}" alt="Изображение">
+                        ` : ''}
+                        ${!isLocked ? `
+                            <input type="file" accept="image/*" class="image-input" style="display: none">
+                            <div class="image-placeholder">
                                 <i class="fas fa-image"></i>
-                                <p>Кликнете за да изберете изображение</p>
-                             </div>`
-                        }
+                                <p>${element.imageUrl ? 'Кликнете за да промените изображението' : 'Кликнете за да добавите изображение'}</p>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
 
-                const imageContainer = div.querySelector('.image-container');
-                const fileInput = div.querySelector('.image-input');
+                if (!isLocked) {
+                    const imageContainer = div.querySelector('.image-container');
+                    const fileInput = div.querySelector('.image-input');
+                    const placeholder = div.querySelector('.image-placeholder');
 
-                imageContainer.addEventListener('click', () => fileInput.click());
-                fileInput.addEventListener('change', () => {
-                    const file = fileInput.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = div.querySelector('.preview-image') || 
-                                      document.createElement('img');
-                            img.className = 'preview-image';
-                            img.src = e.target.result;
-                            img.style.display = 'block';
-                            
-                            const placeholder = div.querySelector('.image-placeholder');
-                            if (placeholder) {
-                                placeholder.remove();
-                            }
-                            if (!div.querySelector('.preview-image')) {
-                                imageContainer.appendChild(img);
-                            }
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+                    imageContainer.addEventListener('click', () => {
+                        if (!isLocked) {
+                            fileInput.click();
+                        }
+                    });
+
+                    fileInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file && file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                let img = div.querySelector('.preview-image');
+                                if (!img) {
+                                    img = document.createElement('img');
+                                    img.className = 'preview-image';
+                                    imageContainer.insertBefore(img, placeholder);
+                                }
+                                img.src = e.target.result;
+                                img.style.display = 'block';
+                                
+                                if (placeholder) {
+                                    placeholder.querySelector('p').textContent = 'Кликнете за да промените изображението';
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
             }
 
             this.container.appendChild(div);
@@ -141,9 +164,12 @@ class SellerForm {
                 const textarea = element.querySelector('.form-input');
                 elementData.value = textarea.value;
                 elementData.fontSize = textarea.style.fontSize;
+                elementData.isLocked = element.classList.contains('locked-field');
+                elementData.placeholder = textarea.placeholder;
             } else if (elementData.type === 'image') {
                 const img = element.querySelector('.preview-image');
                 elementData.imageUrl = img ? img.src : '';
+                elementData.isLocked = element.classList.contains('locked-field');
             }
 
             formData.elements.push(elementData);

@@ -90,11 +90,13 @@ class FormBuilder {
             if (elementData.type === 'text') {
                 const textarea = element.querySelector('.form-input');
                 elementData.fontSize = textarea.style.fontSize;
+                elementData.value = textarea.value;
+                elementData.isLocked = element.classList.contains('locked-field');
                 elementData.placeholder = textarea.placeholder;
-                elementData.value = ''; // Празно за шаблона
             } else if (elementData.type === 'image') {
                 const img = element.querySelector('.preview-image');
                 elementData.imageUrl = img.style.display !== 'none' ? img.src : '';
+                elementData.isLocked = element.classList.contains('locked-field');
             }
 
             template.elements.push(elementData);
@@ -148,38 +150,62 @@ class FormBuilder {
                     <button class="font-size-btn" data-size="small" title="Нормален текст (Съдържание)">
                         <i class="fas fa-paragraph"></i>
                     </button>
+                    <button class="lock-btn" title="Заключи текста">
+                        <i class="fas fa-lock-open"></i>
+                    </button>
                 </div>
                 <textarea class="form-input" placeholder="Текстово поле"></textarea>
                 ${resizeHandles}
             `;
 
-            // Добавяме функционалност за промяна на размера на шрифта
             const textarea = element.querySelector('.form-input');
             const fontButtons = element.querySelectorAll('.font-size-btn');
+            const lockButton = element.querySelector('.lock-btn');
             
+            // Добавяме функционалност за промяна на placeholder според размера на шрифта
             fontButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.addEventListener('click', () => {
                     const size = btn.dataset.size;
-                    fontButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
                     switch(size) {
                         case 'large':
-                            textarea.style.fontSize = '24px';
+                            textarea.placeholder = 'Текстово поле за заглавия';
+                            textarea.style.fontSize = '1.5rem';
                             break;
                         case 'medium':
-                            textarea.style.fontSize = '18px';
+                            textarea.placeholder = 'Текстово поле за среден текст';
+                            textarea.style.fontSize = '1.2rem';
                             break;
                         case 'small':
-                            textarea.style.fontSize = '14px';
+                            textarea.placeholder = 'Текстово поле за информация';
+                            textarea.style.fontSize = '1rem';
                             break;
                     }
                 });
             });
 
+            // Добавяме функционалност за заключване на полето
+            lockButton.addEventListener('click', () => {
+                const isLocked = lockButton.classList.toggle('locked');
+                const icon = lockButton.querySelector('i');
+                
+                if (isLocked) {
+                    icon.className = 'fas fa-lock';
+                    lockButton.title = 'Отключи текста';
+                    element.classList.add('locked-field');
+                } else {
+                    icon.className = 'fas fa-lock-open';
+                    lockButton.title = 'Заключи текста';
+                    element.classList.remove('locked-field');
+                }
+            });
         } else if (type === 'image') {
             element.innerHTML = `
                 <div class="drag-handle"></div>
+                <div class="image-controls">
+                    <button class="lock-btn" title="Заключи изображението">
+                        <i class="fas fa-lock-open"></i>
+                    </button>
+                </div>
                 <div class="image-container">
                     <input type="file" accept="image/*" class="image-input" style="display: none">
                     <div class="image-placeholder">
@@ -191,16 +217,42 @@ class FormBuilder {
                 ${resizeHandles}
             `;
 
-            // Добавяме функционалност за качване на изображение
             const imageContainer = element.querySelector('.image-container');
             const fileInput = element.querySelector('.image-input');
             const placeholder = element.querySelector('.image-placeholder');
             const previewImage = element.querySelector('.preview-image');
+            const lockButton = element.querySelector('.lock-btn');
 
-            // Показваме диалога за избор на файл при клик
-            imageContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('resize-handle')) return;
-                fileInput.click();
+            // Добавяме функционалност за заключване
+            lockButton.addEventListener('click', () => {
+                if (!previewImage.src) {
+                    this.showError('Първо добавете изображение преди да заключите полето!');
+                    return;
+                }
+
+                const isLocked = lockButton.classList.toggle('locked');
+                const icon = lockButton.querySelector('i');
+                
+                if (isLocked) {
+                    icon.className = 'fas fa-lock';
+                    lockButton.title = 'Отключи изображението';
+                    element.classList.add('locked-field');
+                    imageContainer.classList.add('locked');
+                    fileInput.disabled = true;
+                } else {
+                    icon.className = 'fas fa-lock-open';
+                    lockButton.title = 'Заключи изображението';
+                    element.classList.remove('locked-field');
+                    imageContainer.classList.remove('locked');
+                    fileInput.disabled = false;
+                }
+            });
+
+            // Модифицираме съществуващата функционалност за качване на изображение
+            imageContainer.addEventListener('click', () => {
+                if (!element.classList.contains('locked-field')) {
+                    fileInput.click();
+                }
             });
 
             // Обработваме избраното изображение
