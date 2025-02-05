@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продавач Панел</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="seller.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="seller-container">
+        <div id="form-container" class="form-container"></div>
+        <div class="sidebar">
+            <h2>Опции</h2>
+            <div class="form-controls">
+                <div class="control-group">
+                    <input type="file" id="load-template" accept=".json" style="display: none">
+                    <button id="load-template-btn" class="control-btn">
+                        <i class="fas fa-file-upload"></i>
+                        <span>Зареди шаблон</span>
+                    </button>
+                </div>
+                <div class="control-group">
+                    <input type="text" 
+                           id="form-name" 
+                           class="form-name-input" 
+                           placeholder="Име на формуляра">
+                </div>
+                <div class="control-group">
+                    <button id="save-form" class="control-btn">
+                        <i class="fas fa-save"></i>
+                        <span>Запази формуляр</span>
+                    </button>
+                </div>
+            </div>
+            <div class="back-button-container">
+                <button id="back-to-home" class="back-button">
+                    <i class="fas fa-home"></i>
+                    <span>Начало</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="seller.js"></script>
+</body>
+</html> 

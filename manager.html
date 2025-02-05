@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мениджър Панел</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="manager.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="manager-container">
+        <div class="sidebar">
+            <h2>Елементи</h2>
+            <div class="draggable-items">
+                <div class="drag-item" draggable="true" data-type="text">
+                    <i class="fas fa-font"></i>
+                    <span>Текстово поле</span>
+                </div>
+                <div class="drag-item" draggable="true" data-type="image">
+                    <i class="fas fa-image"></i>
+                    <span>Поле за картинка</span>
+                </div>
+            </div>
+            <div class="template-controls">
+                <div class="template-name-container">
+                    <input type="text" 
+                           id="template-name" 
+                           class="template-name-input" 
+                           placeholder="Име на шаблона">
+                </div>
+                <button id="save-template" class="template-btn">
+                    <i class="fas fa-save"></i>
+                    Запази шаблон
+                </button>
+            </div>
+            <div class="back-button-container">
+                <button id="back-to-home" class="back-button">
+                    <i class="fas fa-home"></i>
+                    <span>Начало</span>
+                </button>
+            </div>
+        </div>
+        <div class="form-builder">
+            <div id="form-canvas" class="form-canvas"></div>
+        </div>
+    </div>
+    <script src="manager.js"></script>
+</body>
+</html> 

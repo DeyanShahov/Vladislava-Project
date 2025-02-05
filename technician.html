@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техник Панел</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="technician.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="technician-container">
+        <div id="form-container" class="form-container"></div>
+        <div class="sidebar">
+            <h2>Преглед на формуляр</h2>
+            <div class="form-controls">
+                <div class="control-group">
+                    <input type="file" id="load-form" accept=".json" style="display: none">
+                    <button id="load-form-btn" class="control-btn">
+                        <i class="fas fa-file-import"></i>
+                        <span>Отвори формуляр</span>
+                    </button>
+                </div>
+            </div>
+            <div class="back-button-container">
+                <button id="back-to-home" class="back-button">
+                    <i class="fas fa-home"></i>
+                    <span>Начало</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="technician.js"></script>
+</body>
+</html> 
